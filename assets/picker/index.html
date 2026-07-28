@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#101329" />
+    <title>月下镜语 · 模型解读牌桌</title>
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <link rel="stylesheet" href="/picker.css" />
+    <script src="/picker.js" defer></script>
+  </head>
+  <body>
+    <div class="ambient ambient-one" aria-hidden="true"></div>
+    <div class="ambient ambient-two" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="月下镜语首页">
+        <span class="brand-mark" aria-hidden="true"><i></i></span>
+        <span>
+          <b>月下镜语</b>
+          <small>MOONLIT MIRROR</small>
+        </span>
+      </a>
+      <span class="local-badge"><i></i> 本机会话</span>
+    </header>
+
+    <main id="top">
+      <section id="setup-view" class="view is-active" aria-labelledby="setup-title">
+        <div class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">由当前对话模型解读</p>
+            <h1 id="setup-title" tabindex="-1">先把问题放到<br />月光下看一看</h1>
+            <p class="hero-lead">
+              你在这里完成抽牌。牌位、方向和象征会交给当前任务连接的模型，
+              解读完成后仍回到这一页。
+            </p>
+            <div class="trust-row" aria-label="会话说明">
+              <span>78 张完整牌组</span>
+              <span>安全随机</span>
+              <span>不需要模型密钥</span>
+            </div>
+          </div>
+          <div class="hero-cards" aria-hidden="true">
+            <div class="preview-card preview-back"></div>
+            <div class="preview-card preview-moon"><span></span></div>
+            <div class="preview-orbit"></div>
+          </div>
+        </div>
+
+        <form id="reading-form" class="setup-panel">
+          <ol class="step-rail" aria-label="设置步骤">
+            <li class="is-current"><b>01</b><span>问题</span></li>
+            <li><b>02</b><span>牌阵</span></li>
+            <li><b>03</b><span>设置</span></li>
+          </ol>
+
+          <fieldset class="field-group">
+            <legend><span>01</span> 你想从哪个角度观察？</legend>
+            <div id="topic-options" class="topic-grid"></div>
+          </fieldset>
+
+          <label class="question-field">
+            <span class="field-label">把问题写下来 <small>也可以留空</small></span>
+            <textarea
+              id="question"
+              maxlength="200"
+              rows="4"
+              placeholder="例如：我该怎样调整工作节奏，避免一直被紧急事项牵着走？"
+            ></textarea>
+            <span id="question-count" class="character-count">0 / 200</span>
+          </label>
+
+          <fieldset class="field-group spread-field">
+            <legend><span>02</span> 选择一种展开方式</legend>
+            <div id="spread-options" class="spread-grid"></div>
+          </fieldset>
+
+          <fieldset class="field-group settings-field">
+            <legend><span>03</span> 抽牌设置</legend>
+            <label class="switch-row">
+              <span>
+                <b>启用逆位</b>
+                <small>每张牌独立以 50% 概率判断方向</small>
+              </span>
+              <input id="reversals" type="checkbox" checked />
+              <i aria-hidden="true"></i>
+            </label>
+          </fieldset>
+
+          <div class="privacy-note">
+            <span aria-hidden="true">◌</span>
+            <p>
+              问题只保存在这次临时会话中，并会交给当前对话模型。
+              数据政策取决于你选择的模型服务；本网页不持有模型密钥。
+            </p>
+          </div>
+
+          <button class="primary-button" type="submit">
+            <span>洗牌并开始</span><i aria-hidden="true">↗</i>
+          </button>
+        </form>
+      </section>
+
+      <section id="draw-view" class="view" aria-labelledby="draw-title" hidden>
+        <div class="view-heading compact-heading">
+          <div>
+            <p class="eyebrow">从完整牌组中选择</p>
+            <h1 id="draw-title" tabindex="-1">让手停在有感觉的位置</h1>
+          </div>
+          <div class="count-orb" aria-live="polite">
+            <b id="draw-count">0</b><span id="draw-total">/ 3</span>
+          </div>
+        </div>
+
+        <div class="draw-progress" aria-hidden="true"><i id="draw-progress-bar"></i></div>
+        <nav id="position-nav" class="position-nav" aria-label="牌位进度"></nav>
+
+        <div class="slot-stage">
+          <div id="draw-slots" class="card-slots"></div>
+          <p class="scroll-hint">左右滑动查看牌位 <span>↔</span></p>
+        </div>
+
+        <div class="deck-shell">
+          <p id="draw-instruction">选择一张卡背，放入第一个牌位。</p>
+          <div id="card-wheel" class="card-wheel" role="group" aria-label="卡背轮盘"></div>
+        </div>
+
+        <div class="sticky-actions">
+          <button id="auto-complete" class="secondary-button" type="button" hidden>完成余下抽取</button>
+          <button id="to-reveal" class="primary-button" type="button" disabled>
+            <span>进入揭示</span><i aria-hidden="true">→</i>
+          </button>
+        </div>
+      </section>
+
+      <section id="reveal-view" class="view" aria-labelledby="reveal-title" hidden>
+        <div class="view-heading compact-heading">
+          <div>
+            <p class="eyebrow">牌已落位</p>
+            <h1 id="reveal-title" tabindex="-1">按自己的节奏翻开</h1>
+          </div>
+          <div class="count-orb" aria-live="polite">
+            <b id="reveal-count">0</b><span id="reveal-total">/ 3</span>
+          </div>
+        </div>
+        <nav id="reveal-position-nav" class="position-nav" aria-label="揭示进度"></nav>
+        <div id="reveal-cards" class="reveal-grid"></div>
+        <div class="sticky-actions">
+          <button id="reveal-all" class="secondary-button" type="button">全部揭示</button>
+          <button id="send-reading" class="primary-button" type="button" disabled>
+            <span>交给当前模型解读</span><i aria-hidden="true">↗</i>
+          </button>
+        </div>
+      </section>
+
+      <section id="waiting-view" class="view waiting-view" aria-labelledby="waiting-title" hidden>
+        <div class="moon-system" aria-hidden="true">
+          <div class="moon-core"></div>
+          <div class="moon-orbit orbit-one"><i></i></div>
+          <div class="moon-orbit orbit-two"><i></i></div>
+          <div class="moon-phase phase-one"></div>
+          <div class="moon-phase phase-two"></div>
+          <div class="moon-phase phase-three"></div>
+        </div>
+        <p class="eyebrow">牌面已送达</p>
+        <h1 id="waiting-title" tabindex="-1">等待当前模型解读</h1>
+        <p id="waiting-copy">
+          当前任务会结合你的问题、每个牌位、正逆位与牌间关系组织结果。
+          不需要重新抽牌，请保留此页面。
+        </p>
+        <div id="waiting-error" class="recoverable-error" hidden>
+          <b>这次结果还没有通过格式检查</b>
+          <p>原抽牌已经保留。模型修正后可以直接重新发布，不需要再次抽牌。</p>
+        </div>
+        <div class="waiting-actions">
+          <button id="check-result" class="secondary-button" type="button">重新检查结果</button>
+          <button id="cancel-session" class="text-button" type="button">结束本次会话</button>
+        </div>
+        <p class="persistent-note">牌面是观察线索，不是现实证据。</p>
+      </section>
+
+      <section id="result-view" class="view result-view" aria-labelledby="result-title" hidden>
+        <header class="result-hero reveal-section">
+          <p class="eyebrow">当前模型的结构化解读</p>
+          <h1 id="result-title" tabindex="-1"></h1>
+          <p id="result-summary" class="result-summary"></p>
+          <div id="result-meta" class="result-meta"></div>
+        </header>
+
+        <section class="result-section reveal-section" aria-labelledby="cards-heading">
+          <div class="section-heading">
+            <span>01</span>
+            <div><p>POSITION BY POSITION</p><h2 id="cards-heading">逐牌解读</h2></div>
+          </div>
+          <div id="result-cards" class="result-cards"></div>
+        </section>
+
+        <section class="result-section reveal-section" aria-labelledby="relations-heading">
+          <div class="section-heading">
+            <span>02</span>
+            <div><p>RELATIONSHIPS</p><h2 id="relations-heading">牌与牌之间</h2></div>
+          </div>
+          <ul id="result-relationships" class="insight-list"></ul>
+        </section>
+
+        <div class="result-practical-grid">
+          <section class="practical-card action-card reveal-section">
+            <p>可以尝试</p>
+            <ul id="result-actions"></ul>
+          </section>
+          <section class="practical-card pause-card reveal-section">
+            <p>先暂缓</p>
+            <ul id="result-pauses"></ul>
+          </section>
+        </div>
+
+        <section class="reflection-panel reveal-section" aria-labelledby="reflection-heading">
+          <p>留给自己</p>
+          <h2 id="reflection-heading">可以慢慢回答的问题</h2>
+          <div id="result-reflections"></div>
+        </section>
+
+        <p id="result-boundary" class="boundary-panel reveal-section"></p>
+        <div class="session-complete reveal-section">
+          <span aria-hidden="true">✓</span>
+          <p><b>解读已回到本页</b><small>临时会话数据会自动清理；此页面仍可继续阅读。</small></p>
+        </div>
+      </section>
+
+      <section id="terminal-view" class="view terminal-view" aria-labelledby="terminal-title" hidden>
+        <div class="terminal-mark" aria-hidden="true">○</div>
+        <h1 id="terminal-title" tabindex="-1">本次会话已结束</h1>
+        <p>临时抽牌数据已清理。需要再次抽牌时，请从当前对话重新运行技能。</p>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+    <noscript>此离线牌桌需要启用 JavaScript 才能完成安全洗牌与模型回传。</noscript>
+  </body>
+</html>
