@@ -1,0 +1,4 @@
+interface:
+  display_name: "月下镜语塔罗抽牌"
+  short_description: "打开离线牌桌抽牌，并由当前连接的模型完成结构化自省解读"
+  default_prompt: "使用 $moonlit-mirror-tarot 打开可视化牌桌，完成抽牌后由当前模型生成并回传结构化解读。"
