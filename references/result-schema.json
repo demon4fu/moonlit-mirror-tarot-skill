@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ModelInterpretationPayload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "readingId",
+    "headline",
+    "summary",
+    "cardInsights",
+    "relationships",
+    "actions",
+    "pauses",
+    "reflections",
+    "boundaryNote"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "readingId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "headline": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1800
+    },
+    "cardInsights": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "positionId",
+          "cardId",
+          "title",
+          "interpretation"
+        ],
+        "properties": {
+          "positionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "cardId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "interpretation": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1600
+          }
+        }
+      }
+    },
+    "relationships": {
+      "$ref": "#/$defs/insightList"
+    },
+    "actions": {
+      "$ref": "#/$defs/shortList"
+    },
+    "pauses": {
+      "$ref": "#/$defs/shortList"
+    },
+    "reflections": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 6,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 500
+      }
+    },
+    "boundaryNote": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 700
+    }
+  },
+  "$defs": {
+    "insightList": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 900
+      }
+    },
+    "shortList": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 5,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 500
+      }
+    }
+  }
+}
